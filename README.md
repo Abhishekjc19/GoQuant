@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GoQuant Trading Simulator
 
 A sophisticated trading simulator that provides real-time market impact analysis and transaction cost estimation using advanced mathematical models.
@@ -120,3 +121,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Abhishek JC - [@Abhishekjc19](https://github.com/Abhishekjc19)
 
 Project Link: [https://github.com/Abhishekjc19/GoQuant](https://github.com/Abhishekjc19/GoQuant) 
+=======
+# GoQuant
+>>>>>>> b1037156ca217532a8ff8ba58b06298083ee1c4c
