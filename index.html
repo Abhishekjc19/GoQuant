@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoQuant - Advanced Trading Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <h2>GoQuant</h2>
+            </div>
+            <div class="nav-links">
+                <a href="#simulator" class="nav-link">Simulator</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#documentation" class="nav-link">Documentation</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">GoQuant Trading Simulator</h1>
+        <p class="hero-subtitle">Advanced market impact analysis and transaction cost estimation</p>
+        <div class="hero-actions">
+            <button class="button button-primary" id="start-simulator">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 3l14 9-14 9V3z"/>
+                </svg>
+                Start Simulator
+            </button>
+            <button class="button button-secondary" id="show-docs">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                View Documentation
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Connection Status -->
+        <div class="connection-status">
+            <div id="loading-indicator" class="loading-indicator hidden"></div>
+            <span id="connection-status" class="status-disconnected">Disconnected</span>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-container">
+            <div id="error-message" class="error-message hidden"></div>
+        </div>
+
+        <!-- Simulator Panel -->
+        <section id="simulator" class="simulator-panel">
+            <!-- Order Book -->
+            <div class="order-book">
+                <div class="order-book-header">
+                    <h2>Order Book</h2>
+                    <span id="last-update-time" class="order-book-footer"></span>
+                </div>
+                <div class="order-book-content">
+                    <div class="asks">
+                        <h3>Asks</h3>
+                        <div id="asks-list" class="order-list"></div>
+                    </div>
+                    <div class="bids">
+                        <h3>Bids</h3>
+                        <div id="bids-list" class="order-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trading Panel -->
+            <div class="trading-panel">
+                <h2>Trading Parameters</h2>
+                <div class="input-group">
+                    <label for="exchange">Exchange</label>
+                    <select id="exchange" class="input" disabled>
+                        <option value="OKX">OKX</option>
+                    </select>
+                    <span class="input-hint">Currently only OKX is supported</span>
+                </div>
+                <div class="input-group">
+                    <label for="symbol">Symbol</label>
+                    <select id="symbol" class="input" disabled>
+                        <option value="BTC-USDT-SWAP">BTC-USDT-SWAP</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="order-type">Order Type</label>
+                    <select id="order-type" class="input">
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="order-size">Order Size (BTC)</label>
+                    <input type="number" id="order-size" class="input" value="1.0" min="0.0001" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label for="volatility">Market Volatility (%)</label>
+                    <input type="number" id="volatility" class="input" value="2.0" min="0.1" max="100" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="fee-tier">Fee Tier</label>
+                    <select id="fee-tier" class="input">
+                        <option value="tier1">Tier 1 (0.08% / 0.10%)</option>
+                        <option value="tier2">Tier 2 (0.07% / 0.09%)</option>
+                        <option value="tier3">Tier 3 (0.06% / 0.08%)</option>
+                    </select>
+                    <span class="input-hint">Maker / Taker fees</span>
+                </div>
+                <div class="button-group">
+                    <button id="calculate-btn" class="button button-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        Calculate Impact & Fees
+                    </button>
+                    <button id="reset-btn" class="button button-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                        Reset to Defaults
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results">
+                <h2>Analysis Results</h2>
+                <div class="results-grid">
+                    <div id="market-impact" class="result-card"></div>
+                    <div id="slippage" class="result-card"></div>
+                    <div id="fees" class="result-card"></div>
+                    <div id="net-cost" class="result-card"></div>
+                    <div id="maker-taker" class="result-card"></div>
+                    <div id="latency" class="result-card"></div>
+                </div>
+                <div class="performance-metrics">
+                    <h3>Performance Metrics</h3>
+                    <div id="performance-stats" class="performance-stats"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Documentation Modal -->
+    <div id="docs-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Documentation</h2>
+                <button id="close-docs" class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>About GoQuant Simulator</h3>
+                <p>The GoQuant Trading Simulator provides real-time market impact analysis and transaction cost estimation using advanced mathematical models.</p>
+                
+                <h3>Features</h3>
+                <ul>
+                    <li>Real-time order book updates via WebSocket</li>
+                    <li>Almgren-Chriss model for market impact calculation</li>
+                    <li>Expected slippage estimation</li>
+                    <li>Maker/Taker fee calculation</li>
+                    <li>Performance metrics and latency monitoring</li>
+                </ul>
+
+                <h3>Usage</h3>
+                <ol>
+                    <li>Select your trading parameters</li>
+                    <li>Enter the order size</li>
+                    <li>Adjust volatility and fee tier if needed</li>
+                    <li>Click "Calculate Impact & Fees" to see results</li>
+                </ol>
+
+                <h3>Models Used</h3>
+                <ul>
+                    <li>Almgren-Chriss Model for market impact</li>
+                    <li>Linear regression for slippage estimation</li>
+                    <li>Logistic regression for maker/taker proportion</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 GoQuant. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 

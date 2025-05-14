@@ -1,0 +1,9 @@
+{
+    "name": "goquant",
+    "version": "1.0.0",
+    "dependencies": [
+        "qt6-base",
+        "nlohmann-json"
+    ],
+    "builtin-baseline": "2024-03-20"
+} 
