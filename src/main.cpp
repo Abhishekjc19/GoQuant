@@ -1,3 +1,16 @@
+/**
+ * @file main.cpp
+ * @brief Main entry point for the GoQuant trading system
+ * 
+ * This file implements the main trading system loop, including order book processing,
+ * fee calculations, and performance monitoring. It sets up the core components and
+ * connects their signals for real-time market data processing.
+ * 
+ * @author GoQuant Team
+ * @version 1.0
+ * @date 2024
+ */
+
 #include "core/OrderBookProcessor.h"
 #include "core/FeeCalculator.h"
 #include "models/RegressionModels.h"
@@ -10,7 +23,15 @@
 
 using namespace GoQuant;
 
-// Simulate order book updates
+/**
+ * @brief Simulates order book updates with sample market data
+ * 
+ * This function creates a sample order book update with mock data for testing
+ * and demonstration purposes. In a production environment, this would be
+ * replaced with real market data feeds.
+ * 
+ * @param processor Reference to the OrderBookProcessor instance
+ */
 void simulateOrderBook(OrderBookProcessor& processor) {
     nlohmann::json orderBookData = {
         {"timestamp", "2024-03-20T10:00:00Z"},
@@ -31,6 +52,21 @@ void simulateOrderBook(OrderBookProcessor& processor) {
     processor.processOrderBook(orderBookData);
 }
 
+/**
+ * @brief Main entry point for the trading system
+ * 
+ * Initializes and connects all core components of the trading system:
+ * - Order book processor for market data
+ * - Fee calculator for transaction costs
+ * - Performance monitor for system metrics
+ * - Regression models for market analysis
+ * 
+ * Sets up a timer-based update loop that processes market data every second.
+ * 
+ * @param argc Command line argument count
+ * @param argv Command line argument values
+ * @return int Application exit code
+ */
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
 

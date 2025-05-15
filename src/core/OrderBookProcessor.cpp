@@ -1,3 +1,16 @@
+/**
+ * @file OrderBookProcessor.cpp
+ * @brief Implementation of the OrderBookProcessor class for real-time order book analysis
+ * 
+ * This file contains the implementation of the OrderBookProcessor class, which handles
+ * real-time processing of order book data, including market impact calculation,
+ * slippage estimation, and maker/taker proportion analysis.
+ * 
+ * @author GoQuant Team
+ * @version 1.0
+ * @date 2024
+ */
+
 #include "core/OrderBookProcessor.h"
 #include "models/RegressionModels.h"
 #include <algorithm>
@@ -6,6 +19,14 @@
 
 namespace GoQuant {
 
+/**
+ * @brief Constructs a new OrderBookProcessor instance
+ * 
+ * Initializes the order book processor with a pre-allocated history buffer
+ * to store historical order book snapshots for analysis.
+ * 
+ * @param parent Parent QObject for Qt signal/slot system
+ */
 OrderBookProcessor::OrderBookProcessor(QObject *parent)
     : QObject(parent)
 {
@@ -14,6 +35,15 @@ OrderBookProcessor::OrderBookProcessor(QObject *parent)
 
 OrderBookProcessor::~OrderBookProcessor() = default;
 
+/**
+ * @brief Processes incoming order book data
+ * 
+ * Parses and validates incoming order book data in JSON format, updates the current
+ * order book state, and emits signals for various market metrics.
+ * 
+ * @param data JSON object containing order book data
+ * @throws std::runtime_error if data parsing fails
+ */
 void OrderBookProcessor::processOrderBook(const nlohmann::json& data) {
     try {
         OrderBook newOrderBook;
@@ -60,11 +90,26 @@ void OrderBookProcessor::processOrderBook(const nlohmann::json& data) {
     }
 }
 
+/**
+ * @brief Retrieves the most recent order book snapshot
+ * 
+ * @return OrderBook Current order book state
+ */
 OrderBook OrderBookProcessor::getLatestOrderBook() const {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_currentOrderBook;
 }
 
+/**
+ * @brief Calculates market impact for a given order size
+ * 
+ * Estimates the price impact of executing an order of specified size by
+ * calculating the weighted average price across multiple price levels.
+ * 
+ * @param quantity Order size in base currency
+ * @param isBuy True for buy orders, false for sell orders
+ * @return double Market impact as a percentage of mid price
+ */
 double OrderBookProcessor::calculateMarketImpact(double quantity, bool isBuy) const {
     std::lock_guard<std::mutex> lock(m_mutex);
     
@@ -95,6 +140,16 @@ double OrderBookProcessor::calculateMarketImpact(double quantity, bool isBuy) co
     return std::abs(averagePrice - midPrice) / midPrice;
 }
 
+/**
+ * @brief Calculates slippage for a given order size
+ * 
+ * Estimates the price slippage that would occur when executing an order
+ * of specified size, taking into account available liquidity at each price level.
+ * 
+ * @param quantity Order size in base currency
+ * @param isBuy True for buy orders, false for sell orders
+ * @return double Slippage as a percentage of mid price, or infinity if insufficient liquidity
+ */
 double OrderBookProcessor::calculateSlippage(double quantity, bool isBuy) const {
     std::lock_guard<std::mutex> lock(m_mutex);
     
@@ -124,6 +179,14 @@ double OrderBookProcessor::calculateSlippage(double quantity, bool isBuy) const 
     return std::abs(averagePrice - midPrice) / midPrice;
 }
 
+/**
+ * @brief Calculates the proportion of maker vs taker orders
+ * 
+ * Analyzes order book history to estimate the ratio of maker to taker orders
+ * based on price movement patterns.
+ * 
+ * @return double Proportion of maker orders (0.0 to 1.0)
+ */
 double OrderBookProcessor::calculateMakerTakerProportion() const {
     std::lock_guard<std::mutex> lock(m_mutex);
     
@@ -163,6 +226,12 @@ double OrderBookProcessor::calculateMakerTakerProportion() const {
     return totalCount > 0 ? static_cast<double>(makerCount) / totalCount : 0.5;
 }
 
+/**
+ * @brief Maintains the order book history within size limits
+ * 
+ * Removes oldest entries when history exceeds HISTORY_SIZE to prevent
+ * unbounded memory growth.
+ */
 void OrderBookProcessor::maintainHistory() {
     while (m_orderBookHistory.size() > HISTORY_SIZE) {
         m_orderBookHistory.pop_front();
